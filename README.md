@@ -32,7 +32,7 @@ cp -R /path/to/interview-to-portfolio-repository-builder \
 Common local path:
 
 ```bash
-cp -R /Users/jpneville/projects/career-repo-builder-skill/interview-to-portfolio-repository-builder \
+cp -R /path/to/career-repo-builder-skill/interview-to-portfolio-repository-builder \
   ~/.codex/skills/interview-to-portfolio-repository-builder
 ```
 
@@ -128,7 +128,7 @@ Output:
 ## Publish This Repo
 
 ```bash
-cd /Users/jpneville/projects/career-repo-builder-skill
+cd /path/to/career-repo-builder-skill
 git init
 git add .
 git commit -m "Add interview-to-portfolio skill with handoff prompts"
