@@ -4,6 +4,7 @@ A Codex skill that interviews a user and builds a structured, evidence-aware car
 1. Portfolio-site generation
 2. Role-targeted resume tailoring
 3. Chatbot-ready professional Q&A grounding
+4. Contractor portfolio card buildouts
 
 ## Repository Layout
 
