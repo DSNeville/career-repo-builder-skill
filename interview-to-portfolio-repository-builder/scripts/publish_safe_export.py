@@ -23,6 +23,12 @@ PRIVATE_LINE_PATTERNS = [
     re.compile(r"/Users/", re.IGNORECASE),
 ]
 
+PUBLISH_METADATA_PATTERNS = [
+    re.compile(r"\s*\(Confidence:.*$", re.IGNORECASE),
+    re.compile(r"\s*\(Evidence:.*$", re.IGNORECASE),
+    re.compile(r"\s*\(publication-safe phrasing approved\)", re.IGNORECASE),
+]
+
 PUBLIC_SECTION_DEFAULTS = {
     "context": "public",
     "what_i_built": "public",
@@ -47,14 +53,22 @@ def is_public_line(value: str) -> bool:
     return not any(pattern.search(line) for pattern in PRIVATE_LINE_PATTERNS)
 
 
+def strip_publish_metadata(value: str) -> str:
+    text = value
+    for pattern in PUBLISH_METADATA_PATTERNS:
+        text = pattern.sub("", text)
+    return text.strip()
+
+
 def sanitize_text(value: str) -> str:
-    lines = [line.strip() for line in value.splitlines()]
+    lines = [strip_publish_metadata(line.strip()) for line in value.splitlines()]
     kept = [line for line in lines if is_public_line(line)]
     return "\n".join(kept).strip()
 
 
 def sanitize_list(values: list[str]) -> list[str]:
-    return [item.strip() for item in values if is_public_line(item)]
+    cleaned = [strip_publish_metadata(item.strip()) for item in values]
+    return [item for item in cleaned if is_public_line(item)]
 
 
 def load_json(path: Path, fallback: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -162,6 +176,8 @@ def normalize_voice_variants(website: dict[str, Any], structured: dict[str, Any]
     variants = website.get("voice_variants") if isinstance(website.get("voice_variants"), dict) else {}
 
     base_summary = str(structured.get("public_summary", "")).strip()
+    base_highlights = structured.get("highlights", [])
+    base_outcomes = structured.get("outcomes", [])
     base_built = structured.get("what_i_built", [])
     base_impact = structured.get("impact_highlights", [])
 
@@ -177,6 +193,8 @@ def normalize_voice_variants(website: dict[str, Any], structured: dict[str, Any]
 
     first_payload = {
         "public_summary": first_person(first_summary),
+        "highlights": [first_person(item) for item in sanitize_list(list(first.get("highlights") or base_highlights))],
+        "outcomes": [first_person(item) for item in sanitize_list(list(first.get("outcomes") or base_outcomes))],
         "what_i_built": [first_person(item) for item in sanitize_list(list(first.get("what_i_built") or base_built))],
         "impact_highlights": [
             first_person(item) for item in sanitize_list(list(first.get("impact_highlights") or base_impact))
@@ -185,6 +203,8 @@ def normalize_voice_variants(website: dict[str, Any], structured: dict[str, Any]
 
     third_payload = {
         "public_summary": third_person(third_summary, display_name),
+        "highlights": [third_person(item, display_name) for item in sanitize_list(list(third.get("highlights") or base_highlights))],
+        "outcomes": [third_person(item, display_name) for item in sanitize_list(list(third.get("outcomes") or base_outcomes))],
         "what_i_built": [third_person(item, display_name) for item in sanitize_list(list(third.get("what_i_built") or base_built))],
         "impact_highlights": [
             third_person(item, display_name)
@@ -205,6 +225,7 @@ def export_project(project_dir: Path, voice: str, display_name: str) -> dict[str
 
     parsed = parse_project_markdown(project_md.read_text(encoding="utf-8"))
     website = load_json(project_dir / "website.json", fallback={})
+    display = website.get("display") if isinstance(website.get("display"), dict) else {}
 
     visibility = dict(PUBLIC_SECTION_DEFAULTS)
     visibility.update(website.get("section_visibility", {}))
@@ -230,14 +251,27 @@ def export_project(project_dir: Path, voice: str, display_name: str) -> dict[str
         )
 
     structured_input = website.get("structured_fields") if isinstance(website.get("structured_fields"), dict) else {}
+    highlights = list(structured_input.get("highlights", []))
+    outcomes = list(structured_input.get("outcomes", []))
     what_i_built = list(structured_input.get("what_i_built", []))
     impact_highlights = list(structured_input.get("impact_highlights", []))
+
+    if not highlights:
+        highlights = list(what_i_built)
+    if not outcomes:
+        outcomes = list(impact_highlights)
+
+    if not what_i_built:
+        what_i_built = list(highlights)
 
     if not what_i_built:
         for section in public_sections:
             if section["key"] == "what_i_built":
                 what_i_built = section["bullets"]
                 break
+
+    if not impact_highlights:
+        impact_highlights = list(outcomes)
 
     if not impact_highlights:
         for section in public_sections:
@@ -247,6 +281,8 @@ def export_project(project_dir: Path, voice: str, display_name: str) -> dict[str
 
     structured = {
         "public_summary": sanitize_text(str(structured_input.get("public_summary", parsed["context"]))),
+        "highlights": sanitize_list(highlights),
+        "outcomes": sanitize_list(outcomes),
         "what_i_built": sanitize_list(what_i_built),
         "impact_highlights": sanitize_list(impact_highlights),
         "stack": sanitize_list(list(structured_input.get("stack", parsed["stack"]))),
@@ -254,13 +290,18 @@ def export_project(project_dir: Path, voice: str, display_name: str) -> dict[str
 
     voice_variants = normalize_voice_variants(website, structured, display_name)
 
+    timeline_display = str(display.get("timeline_display") or "hide")
+    title = sanitize_text(str(display.get("title") or parsed["title"]))
+    when = sanitize_text(parsed["when"]) if timeline_display != "hide" else ""
+
     return {
         "slug": project_dir.name,
-        "title": sanitize_text(parsed["title"]),
-        "when": sanitize_text(parsed["when"]),
+        "title": title,
+        "when": when,
         "context": sanitize_text(parsed["context"]),
         "my_role": sanitize_text(parsed["my_role"]),
         "stack": sanitize_list(parsed["stack"]),
+        "display": {"timeline_display": timeline_display},
         "public_sections": public_sections,
         "structured_fields": structured,
         "voice_variants": voice_variants,

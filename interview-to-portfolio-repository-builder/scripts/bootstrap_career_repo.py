@@ -23,12 +23,26 @@ CAREER_TEMPLATE = {
     "summary": "",
     "portfolio_style_profile": {
         "tone": "professional",
-        "primary_color": "orange",
+        "primary_color": "neutral",
         "section_emphasis": [
-            "current_focus",
             "featured_projects",
             "leadership",
+            "skills",
         ],
+    },
+    "publication_preferences": {
+        "default_public_voice": "first_person",
+        "anonymize_clients": True,
+        "anonymize_employer_names": False,
+        "show_evidence_on_site": False,
+        "show_project_dates": "only_if_precise",
+        "include_writing_section": False,
+    },
+    "site_build_hints": {
+        "home_style": "portfolio_first",
+        "archive_strategy": "separate_page",
+        "project_detail_layout": "highlights_outcomes",
+        "chat_audience": "recruiter_or_hiring_manager",
     },
     "target_roles": [],
     "skills": {
@@ -114,6 +128,8 @@ This folder stores a structured, evidence-aware career dataset used for automate
    - `python3 scripts/publish_safe_export.py --root /career --voice first_person`
 3. Lint publish outputs:
    - `python3 scripts/publish_lint.py --path /career/public_site`
+4. Generate build handoff artifacts:
+   - `python3 scripts/build_handoff.py --root /career`
 """
 
 

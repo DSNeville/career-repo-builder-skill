@@ -70,20 +70,30 @@ section_visibility:
     "evidence": "private",
     "notes_lessons": "public"
   },
+  "display": {
+    "title": "<public-safe title>",
+    "timeline_display": "hide"
+  },
   "structured_fields": {
     "public_summary": "<portfolio summary>",
-    "what_i_built": ["<bullet>"],
-    "impact_highlights": ["<bullet>"],
+    "highlights": ["<bullet>"],
+    "outcomes": ["<bullet>"],
+    "what_i_built": ["<compatibility bullet>"],
+    "impact_highlights": ["<compatibility bullet>"],
     "stack": ["<tech>"]
   },
   "voice_variants": {
     "first_person": {
       "public_summary": "I built ...",
+      "highlights": ["I designed ..."],
+      "outcomes": ["I improved ..."],
       "what_i_built": ["I designed ..."],
       "impact_highlights": ["I improved ..."]
     },
     "third_person": {
       "public_summary": "JP Neville built ...",
+      "highlights": ["JP designed ..."],
+      "outcomes": ["JP improved ..."],
       "what_i_built": ["JP designed ..."],
       "impact_highlights": ["JP improved ..."]
     }
@@ -115,8 +125,22 @@ evidence:
   "summary": "",
   "portfolio_style_profile": {
     "tone": "professional|playful|minimalist",
-    "primary_color": "orange|<other>",
-    "section_emphasis": ["current_focus", "featured_projects", "leadership"]
+    "primary_color": "neutral|<other>",
+    "section_emphasis": ["featured_projects", "leadership", "skills"]
+  },
+  "publication_preferences": {
+    "default_public_voice": "first_person|third_person",
+    "anonymize_clients": true,
+    "anonymize_employer_names": false,
+    "show_evidence_on_site": false,
+    "show_project_dates": "always|only_if_precise|hide",
+    "include_writing_section": false
+  },
+  "site_build_hints": {
+    "home_style": "portfolio_first",
+    "archive_strategy": "separate_page",
+    "project_detail_layout": "highlights_outcomes",
+    "chat_audience": "recruiter_or_hiring_manager"
   },
   "target_roles": [],
   "skills": {
@@ -186,9 +210,9 @@ evidence:
 ```
 
 Publication guidance:
-- If exact numbers are sensitive for public posting, keep the claim truthful but generalized.
-- Keep detailed numbers in private evidence notes or backlog until approved for publication.
-- When a claim is reused in a resume variant, prefer HIGH/MEDIUM confidence items.
+- If exact numbers are sensitive, keep public claim wording generalized and truthful.
+- Keep detailed numbers in private evidence notes or backlog until approved.
+- For resume variants, prefer HIGH/MEDIUM confidence claims.
 
 ## `backlog_questions.md`
 
@@ -197,9 +221,47 @@ Publication guidance:
 - [ ] <question> (priority: HIGH|MED|LOW) (related: <slug>)
 ```
 
+## `public_site/website_handoff.json` shape
+
+```json
+{
+  "generated_at_utc": "<iso8601>",
+  "source_root": "<career path>",
+  "defaults": {
+    "public_voice": "first_person",
+    "anonymize_clients": true,
+    "show_evidence_on_site": false,
+    "show_project_dates": "only_if_precise"
+  },
+  "site_profile": {
+    "home_style": "portfolio_first",
+    "archive_strategy": "separate_page",
+    "project_detail_layout": "highlights_outcomes",
+    "chat_audience": "recruiter_or_hiring_manager"
+  },
+  "featured_project_order": ["<slug>"],
+  "projects": [
+    {
+      "slug": "<slug>",
+      "title": "<public-safe title>",
+      "bucket": "featured|archive",
+      "timeline_display": "hide|show",
+      "ready_for_site": true
+    }
+  ],
+  "chat_requirements": {
+    "strict_grounding": true,
+    "fallback_text": "I don’t have enough evidence in my repository to answer that confidently,",
+    "open_with_phrase": "JP is"
+  },
+  "public_safety_rules": ["..."]
+}
+```
+
 ## Publish-safe scripts
 
 ```bash
 python3 scripts/publish_safe_export.py --root /career --voice first_person
 python3 scripts/publish_lint.py --path /career/public_site
+python3 scripts/build_handoff.py --root /career
 ```

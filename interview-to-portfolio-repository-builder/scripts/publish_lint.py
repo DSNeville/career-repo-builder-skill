@@ -18,6 +18,8 @@ BLOCKED_PATTERNS = [
     ("PRIVATE_UNSHARED", re.compile(r"PRIVATE_UNSHARED", re.IGNORECASE)),
     ("PRIVATE_PATH", re.compile(r"/Users/", re.IGNORECASE)),
     ("MISSING_MARKER", re.compile(r"\bMISSING\b", re.IGNORECASE)),
+    ("CONFIDENCE_METADATA", re.compile(r"\bConfidence\s*:", re.IGNORECASE)),
+    ("EVIDENCE_METADATA", re.compile(r"\bEvidence\s*:", re.IGNORECASE)),
 ]
 
 

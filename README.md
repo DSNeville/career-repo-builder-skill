@@ -17,6 +17,7 @@ career-repo-builder-skill/
     scripts/bootstrap_career_repo.py
     scripts/publish_safe_export.py
     scripts/publish_lint.py
+    scripts/build_handoff.py
     references/templates.md
 ```
 
@@ -44,7 +45,8 @@ cp -R /path/to/career-repo-builder-skill/interview-to-portfolio-repository-build
 2. Complete evidence and publication-safety iteration (sensitive metrics generalized if needed).
 3. Confirm leadership/profile data is captured (`leadership_profile`).
 4. Optionally run role-targeting modules (`targeting_profile`, `resume_variants`).
-5. Hand off `/career` to a portfolio-site build prompt.
+5. Export publish-safe payload and build handoff files.
+6. Hand off `/career` to a portfolio-site build prompt.
 
 ## Handoff Contract (Recommended)
 
@@ -59,6 +61,14 @@ Treat these files as required handoff inputs:
 
 Publish gating rule:
 Only include claims in public output that are publication-safe and have acceptable confidence/evidence.
+
+Run the handoff generators before building the site:
+
+```bash
+python3 scripts/publish_safe_export.py --root <CAREER_ROOT> --voice first_person
+python3 scripts/publish_lint.py --path <CAREER_ROOT>/public_site
+python3 scripts/build_handoff.py --root <CAREER_ROOT>
+```
 
 ## Prompt: Build Portfolio Site
 
