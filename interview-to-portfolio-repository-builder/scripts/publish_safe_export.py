@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_VOICE = "first_person"
-DEFAULT_NAME = "JP Neville"
+DEFAULT_NAME = "The candidate"
 PRIVATE_LINE_PATTERNS = [
     re.compile(r"NEEDS_CLARIFICATION", re.IGNORECASE),
     re.compile(r"PRIVATE_UNSHARED", re.IGNORECASE),

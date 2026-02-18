@@ -19,14 +19,27 @@ CAREER_TEMPLATE = {
     "name": "",
     "headline": "",
     "location": "",
-    "links": {"linkedin": "", "github": "", "website": ""},
+    "links": {"linkedin": "", "github": "", "website": "", "email": ""},
     "summary": "",
+    "profile_context": {
+        "work_mode": "individual_contributor",
+        "seniority": "",
+        "domain_focus": [],
+    },
+    "assessment_dimensions": [
+        {"id": "technical_delivery", "enabled": True, "priority": "HIGH"},
+        {"id": "people_leadership", "enabled": False, "priority": "MED"},
+        {"id": "mentorship_coaching", "enabled": False, "priority": "MED"},
+        {"id": "product_strategy", "enabled": False, "priority": "MED"},
+        {"id": "research_innovation", "enabled": False, "priority": "LOW"},
+        {"id": "public_presence", "enabled": False, "priority": "LOW"},
+    ],
     "portfolio_style_profile": {
         "tone": "professional",
         "primary_color": "neutral",
         "section_emphasis": [
             "featured_projects",
-            "leadership",
+            "about",
             "skills",
         ],
     },
@@ -42,7 +55,8 @@ CAREER_TEMPLATE = {
         "home_style": "portfolio_first",
         "archive_strategy": "separate_page",
         "project_detail_layout": "highlights_outcomes",
-        "chat_audience": "recruiter_or_hiring_manager",
+        "enable_chatbot": False,
+        "chat_audience": "",
     },
     "target_roles": [],
     "skills": {
@@ -55,21 +69,17 @@ CAREER_TEMPLATE = {
     "experience": [],
     "featured_projects": [],
     "leadership_profile": {
-        "projects_managed_concurrently": "",
-        "people_management_scope": {
-            "direct_reports": "",
-            "dotted_line_reports": "",
-            "mentored_individuals": "",
-        },
-        "team_management_examples": [],
-        "conflict_management_approach": [],
-        "resource_rebalancing_approach": [],
-        "leadership_rituals": [],
-        "chatbot_faq_signals": {
-            "projects_managed_at_once": "",
-            "people_managed_at_once": "",
-            "handling_team_conflict": "",
-        },
+        "enabled": False,
+        "summary": "",
+        "scope": {},
+        "examples": [],
+    },
+    "assistant_profile": {
+        "enabled": False,
+        "audience": "",
+        "response_style": "",
+        "fallback_contact": "",
+        "faq_signals": {},
     },
     "targeting_profile": {
         "target_roles": [],
@@ -107,7 +117,9 @@ This folder stores a structured, evidence-aware career dataset used for automate
 - `projects/<slug>/website.json`: publication controls and structured portfolio fields
 - `claims.md`: claims with confidence and evidence traceability
 - `backlog_questions.md`: unresolved clarification/evidence questions
-- `career.json.leadership_profile`: chatbot-ready leadership and management signals
+- `career.json.assessment_dimensions`: adaptive interview coverage by profile type
+- `career.json.leadership_profile`: optional leadership-specific signals
+- `career.json.assistant_profile`: optional chatbot-specific signals
 - `career.json.targeting_profile`: role targeting and keyword mapping inputs
 - `career.json.story_bank`: interview-ready STAR/CAR stories
 - `career.json.resume_variants`: role-specific resume tailoring pack
@@ -122,7 +134,7 @@ This folder stores a structured, evidence-aware career dataset used for automate
 ## Publish-safe workflow
 1. Create or update project `website.json` files:
    - `section_visibility` for public/private section handling.
-   - `structured_fields` for portfolio rendering (`public_summary`, `what_i_built`, `impact_highlights`, `stack`).
+   - `structured_fields` for portfolio rendering (`public_summary`, `highlights`, `outcomes`, `stack`).
    - `voice_variants` for `first_person` and `third_person`.
 2. Export sanitized public payloads:
    - `python3 scripts/publish_safe_export.py --root /career --voice first_person`
@@ -205,8 +217,14 @@ WEBSITE_JSON_TEMPLATE = {
         "evidence": "private",
         "notes_lessons": "public",
     },
+    "display": {
+        "title": "NEEDS_CLARIFICATION",
+        "timeline_display": "hide",
+    },
     "structured_fields": {
         "public_summary": "NEEDS_CLARIFICATION",
+        "highlights": [],
+        "outcomes": [],
         "what_i_built": [],
         "impact_highlights": [],
         "stack": [],
@@ -214,11 +232,15 @@ WEBSITE_JSON_TEMPLATE = {
     "voice_variants": {
         "first_person": {
             "public_summary": "I NEEDS_CLARIFICATION",
+            "highlights": [],
+            "outcomes": [],
             "what_i_built": [],
             "impact_highlights": [],
         },
         "third_person": {
-            "public_summary": "JP Neville NEEDS_CLARIFICATION",
+            "public_summary": "Candidate NEEDS_CLARIFICATION",
+            "highlights": [],
+            "outcomes": [],
             "what_i_built": [],
             "impact_highlights": [],
         },

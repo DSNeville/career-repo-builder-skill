@@ -1,36 +1,36 @@
 ---
 name: interview-to-portfolio-repository-builder
-description: Conduct a structured, evidence-aware interview and write or update a portfolio-ready /career repository (career.json, project.md, website.json, evidence.yml, claims.md, backlog_questions.md, README.md) for automated portfolio generation and role-targeted resume tailoring.
+description: Conduct a structured, evidence-aware interview and write or update a portfolio-ready /career repository (career.json, project.md, website.json, evidence.yml, claims.md, backlog_questions.md, README.md) for portfolio generation and optional resume/chatbot outputs.
 ---
 
 # Interview-to-Portfolio Repository Builder
 
 ## Overview
 
-Run a structured interview, capture only user-provided facts, and maintain a durable career dataset on disk for downstream portfolio-site generation and job-targeted resume variants. Keep outputs scannable, evidence-aware, privacy-safe, and directly buildable.
+Run an adaptive interview, capture only user-provided facts, and maintain a durable `/career` dataset that can power:
+1. Portfolio sites
+2. Resume tailoring
+3. Optional chatbot grounding
+
+Do not assume everyone is a people leader or wants a chatbot.
 
 ## Non-Negotiable Rules
 
-1. Enforce no fabrication. Never invent facts, metrics, dates, titles, employers, outcomes, awards, or technologies.
-2. Enforce evidence-aware claims. For quantified claims, always record:
+1. No fabrication. Never invent facts, metrics, dates, titles, outcomes, or technologies.
+2. Evidence-aware claims. Quantified claims must include:
 - `Confidence: HIGH|MEDIUM|LOW`
 - `Evidence: <url/path/quote reference or MISSING>`
-3. Enforce source bounds. Use only user-provided chat content plus user-provided files/links.
-4. Enforce iterative safe writes. Never delete user-authored content. Append or minimally edit sections.
-5. Enforce publication safety by default:
-- Hide local/private paths and internal notes from public outputs.
-- Do not expose client names unless explicitly approved.
-- If dates are incomplete, default to hiding them in public site rendering.
-6. Enforce public voice defaults:
-- Portfolio/public copy defaults to first-person (`I ...`).
-- Recruiter chatbot answers should open with `JP is ...`.
-7. Enforce build-ready project structure:
-- Every project must have public-safe title, summary, `highlights[]`, and `outcomes[]` in `website.json.structured_fields`.
-8. Enforce role-fit traceability. When tailoring for jobs, map projects and claims to target role requirements and keywords.
+3. Source bounds. Use only user-provided content/files/links.
+4. Safe iterative writes. Preserve user-authored content; edit minimally.
+5. Public safety defaults:
+- no local/private path leakage
+- no client name exposure unless explicitly approved
+- hide dates when precision is weak
+6. Adaptive workflow. Activate only relevant modules based on user profile and desired outputs.
 
 ## Output Contract
 
-Ensure these paths exist before completion:
+Required files:
 
 ```text
 /career
@@ -45,196 +45,106 @@ Ensure these paths exist before completion:
   /public_site/website_handoff.md
 ```
 
-Use `scripts/bootstrap_career_repo.py` to initialize missing files safely.
-
-## Workflow
-
-Run modules in order. Stop-and-save after each module when requested.
-
-### Module 0: Setup
-
-Ask short, specific questions:
-1. Display name.
-2. Target roles.
-3. Tone (`professional`, `playful`, `minimalist`).
-4. Emphasis areas (leadership, ML, product, consulting, infra, etc.).
-5. Sources:
-- Resume (required): paste or file path.
-- Optional: older resumes, LinkedIn URL/export, GitHub, project writeups, decks.
-6. Confirm write target path (`/career`) and whether it already exists.
-7. Confirm whether role-targeted resume outputs are needed.
-8. If yes, request 1-3 target roles or job postings.
-
-Then initialize missing paths:
+Use:
 
 ```bash
 python3 scripts/bootstrap_career_repo.py --root /career
 ```
 
-Use `--project-slug <slug>` for any known projects.
+## Adaptive Workflow
 
-### Module 0B: Public-Site Guardrails (new, required)
+### Module 0: Setup + Capability Scan (required)
 
-Before deep interviewing, set explicit publication and site defaults in `career.json`:
-1. `publication_preferences.default_public_voice` (`first_person` or `third_person`, default `first_person`).
-2. `publication_preferences.anonymize_clients` (default `true`).
-3. `publication_preferences.show_project_dates` (`always|only_if_precise|hide`, default `only_if_precise`).
-4. `publication_preferences.show_evidence_on_site` (default `false`).
-5. `site_build_hints.home_style` (`portfolio_first` by default).
-6. `site_build_hints.archive_strategy` (`separate_page` by default).
-7. `site_build_hints.project_detail_layout` (`highlights_outcomes` by default).
-8. `site_build_hints.chat_audience` (`recruiter_or_hiring_manager` by default).
+Ask concise calibration questions:
+1. What output do you want now? (`portfolio`, `resume`, `both`, optional `chatbot`)
+2. What is your current work mode? (`individual contributor`, `manager`, `hybrid`, `founder`, `other`)
+3. Which dimensions should be emphasized?
+- technical delivery
+- people leadership
+- product/strategy
+- mentorship/coaching
+- research/innovation
+- public presence (writing/speaking)
+4. Public-safety preferences:
+- anonymize clients? (default yes)
+- show project dates? (`always|only_if_precise|hide`)
+- show evidence links publicly? (default no)
+5. Confirm source inputs and write target path.
 
-### Module 1: Resume Extraction (checkpoint)
+Write these into:
+- `career.json.profile_context`
+- `career.json.assessment_dimensions`
+- `career.json.publication_preferences`
+- `career.json.site_build_hints`
 
-Extract and write:
-1. Roles timeline: company, title, location, start/end.
-2. Skills and stack.
-3. Project bullets, including vague ones.
+### Module 1: Resume/Source Extraction (required)
+
+Extract:
+1. timeline (company/title/location/start/end)
+2. skills + tools
+3. project candidates
 
 Update:
-1. `/career/career.json`
-2. `/career/backlog_questions.md` with missing dates, acronym expansions, unclear scope, missing metrics
-3. `/career/claims.md` with initial claims (`Evidence: MISSING` where needed)
-4. `/career/README.md` with update and generation instructions
+1. `career.json`
+2. `claims.md`
+3. `backlog_questions.md`
+4. `README.md`
 
-### Module 2: Timeline + Skill Clarification
+### Module 2: Clarification Pass (required)
 
-Ask targeted questions to close ambiguity:
-1. Exact dates and official titles.
-2. Team size, reporting line, scope boundaries.
-3. Skills not represented in the latest resume but used in real projects.
-4. Which tools/skills are public-safe to list.
+Close gaps with targeted questions:
+1. date precision
+2. scope and ownership
+3. missing impact evidence
+4. missing skill coverage
 
-Update `/career/career.json`, `/career/claims.md`, and `/career/backlog_questions.md`.
+### Module 3: Project Deep Dive (required, repeat)
 
-### Module 2B: Leadership and Management Signal Capture
+For each flagship project capture:
+1. context/problem
+2. ownership and role
+3. architecture/implementation specifics
+4. constraints and tradeoffs
+5. outcomes/impact with evidence
+6. public-safe phrasing
 
-Ask targeted leadership questions so chatbot answers can be grounded in repository data:
-1. Typical projects managed concurrently.
-2. Typical people-management scope.
-3. Team operating model and leadership rituals.
-4. Conflict-resolution approach with one concrete example.
-5. Resource rebalancing approach under delivery pressure.
-6. Decision-making style for roadmap and tradeoff calls.
+Write:
+1. `projects/<slug>/project.md`
+2. `projects/<slug>/website.json`
+3. `projects/<slug>/evidence.yml`
 
-Write to `career.json.leadership_profile`. Add unresolved items to `/career/backlog_questions.md`.
-
-### Module 3: Flagship Project Deep Dive (repeat 3-8 times)
-
-For each project, ask:
-1. Project name and time window.
-2. Public-safe project title (clear to hiring managers, not internal jargon).
-3. Problem/context (who/why) with public-safe wording.
-4. Ownership and role.
-5. Technical depth:
-- architecture and deployment shape
-- model hosting/runtime and inference path
-- evaluation strategy, tuning/iteration process
-- reliability/cost/performance tradeoffs
-6. Constraints (latency, cost, compliance, timeline).
-7. Collaboration context (team and stakeholders).
-8. Leadership and delivery context.
-9. Impact (quant preferred, qualitative allowed) with confidence/evidence.
-10. Lessons and what to change in retrospect.
-11. Evidence links (repo, PR, docs, screenshots, decks).
-12. Role relevance (supported roles, covered keywords, gaps).
-13. Public section visibility by section (`public|private`).
-14. Structured website fields (required):
+Required `website.json.structured_fields`:
 - `public_summary`
 - `highlights[]`
 - `outcomes[]`
 - `stack[]`
-15. Compatibility fields (recommended):
+
+Compatibility fields may also be present:
 - `what_i_built[]`
 - `impact_highlights[]`
-16. Voice variants:
-- `first_person`
-- `third_person`
 
-Write:
-1. `/career/projects/<slug>/project.md`
-2. `/career/projects/<slug>/website.json`
-3. `/career/projects/<slug>/evidence.yml`
+### Module 4: Optional Specialized Modules (adaptive)
 
-Also update:
-1. `/career/claims.md`
-2. `/career/backlog_questions.md`
+Only run modules enabled by `assessment_dimensions` or explicit user request.
 
-Use templates in `references/templates.md`.
+1. Leadership module:
+- populate `career.json.leadership_profile` only when leadership is relevant
+2. Chatbot module:
+- populate `career.json.assistant_profile` only when chatbot output is requested
+3. Public presence module:
+- writing/speaking sections only when relevant
+4. Resume targeting module:
+- `career.json.targeting_profile` and `resume_variants` only when requested
 
-### Module 4: Evidence and Verification Pass
+### Module 5: Evidence + Publication Review (required)
 
-Review `claims.md` and request proof for public-facing claims first.
+1. downgrade or mark weak claims
+2. generalize sensitive metrics with user approval
+3. ensure public copy excludes private/local references
 
-Publication readiness loop:
-1. Flag claims too specific/sensitive for public posting.
-2. Propose 1-2 generalized alternatives.
-3. Confirm wording with user.
-4. Keep sensitive exact details in private notes only.
+### Module 6: Build Handoff (required)
 
-Normalize evidence:
-1. Public URLs preferred.
-2. Private links allowed; mark as `PRIVATE`.
-3. Local files allowed; keep relative paths.
-
-### Module 5: Portfolio Assembly Hints
-
-Tag:
-1. `featured_projects` (3-6 projects).
-2. About narrative draft (portfolio-first, not resume dump).
-3. Skill clusters (core, tools, cloud, ML, data).
-4. Archive strategy and page-level content rules.
-
-Ensure `career.json` supports site generation:
-1. `summary`
-2. `headline`
-3. `links`
-4. `experience`
-5. `featured_projects`
-6. `skills`
-7. `leadership_profile`
-8. `story_bank`
-9. `targeting_profile`
-10. `resume_variants`
-11. `portfolio_style_profile`
-12. `publication_preferences`
-13. `site_build_hints`
-
-### Module 6: Role Targeting
-
-Capture targeting inputs:
-1. Target role title(s) and seniority.
-2. Target industries and company type preferences.
-3. Geography and work constraints.
-4. Must-have and nice-to-have keywords.
-5. 1-3 target job postings.
-
-Write to `career.json.targeting_profile` and update project role relevance notes.
-
-### Module 7: Resume Tailoring Pack
-
-Generate `career.json.resume_variants` with:
-1. `variant_id`
-2. `target_role`
-3. `target_job_ref`
-4. `summary_angle`
-5. `prioritized_skills`
-6. `prioritized_projects`
-7. `role_fit_bullets`
-8. `deprioritized_content`
-
-Prefer HIGH/MEDIUM confidence claims unless user explicitly requests otherwise.
-
-### Module 8: Build Handoff Pack (required)
-
-Before ending:
-1. Confirm `career` input paths are complete and readable.
-2. Summarize unresolved high-priority backlog items.
-3. Provide copy/paste portfolio-site build prompt.
-4. If role targeting is enabled, provide top-role resume-tailoring prompt.
-5. State publication-safety rules explicitly.
-6. Export and lint publish-safe artifacts:
+Run:
 
 ```bash
 python3 scripts/publish_safe_export.py --root /career --voice first_person
@@ -242,57 +152,35 @@ python3 scripts/publish_lint.py --path /career/public_site
 python3 scripts/build_handoff.py --root /career
 ```
 
-7. Validate chatbot-readiness in handoff summary:
-- show 3 suggested recruiter questions
-- confirm fallback text
-- confirm no private evidence leakage
+Then summarize:
+1. files updated
+2. unresolved HIGH-priority backlog items
+3. enabled modules and why
+4. copy/paste prompt for next portfolio build step
 
-## File Update Protocol
+## Dynamic Questioning Standard
 
-1. Prefer editing existing files over replacing them.
-2. Preserve user-authored content unless explicitly corrected.
-3. Keep unresolved items visible as `NEEDS_CLARIFICATION`.
-4. After each module, list touched files and key additions.
-5. Keep interview questions short.
-6. For role targeting, include explicit keyword-gap questions in backlog.
-
-## Claim Quality Rules
-
-For each claim in `/career/claims.md`, always include:
-
-```text
-- Claim: "<text>"
-  Confidence: HIGH|MEDIUM|LOW
-  Evidence: <url/path or MISSING>
-  Related: <project_slug or role>
-```
-
-Treat as quantified claims when they include `%`, `$`, counts, latency, throughput, or user scale.
-If quantified claims are not publication-safe, generalize wording with user approval.
+Do not use a fixed static questionnaire. Build next questions from current evidence gaps:
+1. ask only what unlocks the next artifact
+2. prioritize missing facts blocking `public_summary/highlights/outcomes`
+3. ask follow-ups when claims are vague, unproven, or non-public-safe
 
 ## Backlog Format
 
-Use this format in `/career/backlog_questions.md`:
+Use:
 
 ```text
 ## Missing details
 - [ ] <question> (priority: HIGH|MED|LOW) (related: <slug>)
 ```
 
-## Stop and Ship Behavior
-
-If user says `stop` or `ship it`, finish current file writes, then provide:
-1. Exact files updated.
-2. Outstanding high-priority backlog questions.
-3. Suggested next module.
-
 ## End Condition
 
-Complete when `/career` contains at least:
-1. `career.json` with timeline, skills, publication preferences, and site build hints.
-2. Three project folders each with `project.md`, `website.json`, and `evidence.yml`.
-3. Updated `claims.md` and `backlog_questions.md`.
-4. `public_site/website_handoff.json` and `public_site/website_handoff.md`.
+Done when:
+1. `career.json` includes profile context + adaptive dimensions + publication defaults
+2. at least three project folders have `project.md`, `website.json`, `evidence.yml`
+3. `claims.md` and `backlog_questions.md` are updated
+4. handoff artifacts exist under `public_site/`
 
 Then output exactly:
 

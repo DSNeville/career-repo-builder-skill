@@ -62,6 +62,10 @@ def collect_project_payloads(root: Path, featured_order: list[str]) -> list[dict
         if not outcomes:
             outcomes = [item for item in structured.get("impact_highlights", []) if isinstance(item, str)]
 
+        has_placeholder = any(
+            marker in (title + " " + summary).upper() for marker in ["NEEDS_CLARIFICATION", "MISSING"]
+        )
+
         payload.append(
             {
                 "slug": slug,
@@ -71,7 +75,7 @@ def collect_project_payloads(root: Path, featured_order: list[str]) -> list[dict
                 "public_summary": summary,
                 "highlights_count": len(highlights),
                 "outcomes_count": len(outcomes),
-                "ready_for_site": bool(summary or highlights or outcomes),
+                "ready_for_site": bool((summary or highlights or outcomes) and not has_placeholder),
             }
         )
 
@@ -82,13 +86,47 @@ def collect_project_payloads(root: Path, featured_order: list[str]) -> list[dict
 
 def build_handoff(root: Path) -> dict[str, Any]:
     career = load_json(root / "career.json", fallback={})
+    display_name = str(career.get("name") or "The candidate").strip()
     publication = career.get("publication_preferences") if isinstance(career.get("publication_preferences"), dict) else {}
     style = career.get("portfolio_style_profile") if isinstance(career.get("portfolio_style_profile"), dict) else {}
     hints = career.get("site_build_hints") if isinstance(career.get("site_build_hints"), dict) else {}
+    dimensions = career.get("assessment_dimensions") if isinstance(career.get("assessment_dimensions"), list) else []
 
     featured_order = [item for item in career.get("featured_projects", []) if isinstance(item, str)]
     projects = collect_project_payloads(root, featured_order)
     high_priority_backlog = parse_backlog_high_priority(root / "backlog_questions.md")
+    enable_chatbot = bool(hints.get("enable_chatbot", False))
+    enabled_dimensions = [
+        str(item.get("id"))
+        for item in dimensions
+        if isinstance(item, dict) and bool(item.get("enabled")) and str(item.get("id", "")).strip()
+    ]
+    has_leadership_dimension = any(
+        isinstance(item, dict)
+        and str(item.get("id", "")).strip().lower() == "people_leadership"
+        and bool(item.get("enabled"))
+        for item in dimensions
+    )
+
+    navigation = ["about", "featured-projects"]
+    if has_leadership_dimension:
+        navigation.append("leadership")
+    navigation.extend(["skills", "archive", "contact"])
+    if enable_chatbot:
+        navigation.append("chat")
+
+    chat_requirements: dict[str, Any] | None = None
+    if enable_chatbot:
+        chat_requirements = {
+            "strict_grounding": True,
+            "fallback_text": "I don’t have enough evidence in my repository to answer that confidently,",
+            "open_with_phrase": f"{display_name} is",
+            "suggested_questions": [
+                "Which projects best demonstrate this candidate's hands-on delivery style?",
+                "How would you summarize this candidate's current focus for a recruiter?",
+                "What is this candidate's strongest achievement and likely value for a team?",
+            ],
+        }
 
     return {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -104,29 +142,14 @@ def build_handoff(root: Path) -> dict[str, Any]:
             "home_style": str(hints.get("home_style") or "portfolio_first"),
             "archive_strategy": str(hints.get("archive_strategy") or "separate_page"),
             "project_detail_layout": str(hints.get("project_detail_layout") or "highlights_outcomes"),
-            "chat_audience": str(hints.get("chat_audience") or "recruiter_or_hiring_manager"),
+            "enable_chatbot": enable_chatbot,
+            "chat_audience": str(hints.get("chat_audience") or ""),
         },
-        "navigation": [
-            "about",
-            "featured-projects",
-            "leadership",
-            "skills",
-            "archive",
-            "contact",
-            "chat",
-        ],
+        "enabled_dimensions": enabled_dimensions,
+        "navigation": navigation,
         "featured_project_order": featured_order,
         "projects": projects,
-        "chat_requirements": {
-            "strict_grounding": True,
-            "fallback_text": "I don’t have enough evidence in my repository to answer that confidently,",
-            "open_with_phrase": "JP is",
-            "suggested_questions": [
-                "Which projects best demonstrate JP's hands-on leadership?",
-                "How would you summarize JP's current focus for a recruiter?",
-                "What is JP's biggest achievement and how could he help my team?",
-            ],
-        },
+        "chat_requirements": chat_requirements,
         "public_safety_rules": [
             "No client names unless explicitly approved.",
             "Do not expose local file paths, private evidence links, or confidence/evidence metadata in public copy.",
@@ -148,8 +171,22 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines.append("")
     lines.append("## Site Profile")
     profile = payload.get("site_profile", {})
-    for key in ["tone", "home_style", "archive_strategy", "project_detail_layout", "chat_audience"]:
+    for key in ["tone", "home_style", "archive_strategy", "project_detail_layout", "enable_chatbot", "chat_audience"]:
         lines.append(f"- {key}: `{profile.get(key)}`")
+
+    lines.append("")
+    lines.append("## Enabled Dimensions")
+    dimensions = payload.get("enabled_dimensions", [])
+    if dimensions:
+        for item in dimensions:
+            lines.append(f"- `{item}`")
+    else:
+        lines.append("- technical_delivery (default)")
+
+    lines.append("")
+    lines.append("## Navigation")
+    for item in payload.get("navigation", []):
+        lines.append(f"- `{item}`")
 
     lines.append("")
     lines.append("## Featured Project Order")
@@ -174,6 +211,16 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines.append("## Public Safety Rules")
     for rule in payload.get("public_safety_rules", []):
         lines.append(f"- {rule}")
+
+    chat = payload.get("chat_requirements")
+    lines.append("")
+    lines.append("## Chat Requirements")
+    if chat:
+        lines.append(f"- strict_grounding: `{chat.get('strict_grounding')}`")
+        lines.append(f"- fallback_text: `{chat.get('fallback_text')}`")
+        lines.append(f"- open_with_phrase: `{chat.get('open_with_phrase')}`")
+    else:
+        lines.append("- chatbot disabled")
 
     lines.append("")
     lines.append("## High Priority Backlog")

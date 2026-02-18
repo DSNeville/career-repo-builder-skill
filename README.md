@@ -3,7 +3,7 @@
 A Codex skill that interviews a user and builds a structured, evidence-aware career repository for:
 1. Portfolio-site generation
 2. Role-targeted resume tailoring
-3. Chatbot-ready professional Q&A grounding
+3. Optional chatbot-ready professional Q&A grounding
 4. Contractor portfolio card buildouts
 
 ## Repository Layout
@@ -42,8 +42,8 @@ cp -R /path/to/career-repo-builder-skill/interview-to-portfolio-repository-build
 ## Workflow Summary
 
 1. Run the skill interview to populate `/career`.
-2. Complete evidence and publication-safety iteration (sensitive metrics generalized if needed).
-3. Confirm leadership/profile data is captured (`leadership_profile`).
+2. Run capability scan and enable only relevant modules (IC, leadership, chatbot, resume targeting).
+3. Complete evidence and publication-safety iteration (sensitive metrics generalized if needed).
 4. Optionally run role-targeting modules (`targeting_profile`, `resume_variants`).
 5. Export publish-safe payload and build handoff files.
 6. Hand off `/career` to a portfolio-site build prompt.
@@ -90,15 +90,16 @@ Requirements:
 2) Use `featured_projects` from career.json first, then optionally additional projects.
 3) Render project pages from `project.md` + `website.json` structured fields.
 4) Allow tone switching between `first_person` and `third_person` from `website.json.voice_variants`.
-5) Show confidence badges for impact claims.
+5) Use `assessment_dimensions` to decide whether to show leadership/chatbot sections.
 6) Respect evidence visibility:
    - public: render links
    - private/local: show "Evidence available on request" without exposing private paths
-7) Add a "Leadership" section using `leadership_profile`.
-8) Add a "Selected Stories" section from `story_bank` if present.
-9) Exclude or de-emphasize items still marked NEEDS_CLARIFICATION.
-10) Keep content scannable and professional.
-11) Output a complete runnable project and include run/build commands.
+7) Add a "Leadership" section only if `leadership_profile.enabled` is true.
+8) Add chatbot UI only if `site_build_hints.enable_chatbot` is true.
+9) Add a "Selected Stories" section from `story_bank` if present.
+10) Exclude or de-emphasize items still marked NEEDS_CLARIFICATION.
+11) Keep content scannable and professional.
+12) Output a complete runnable project and include run/build commands.
 
 Before finalizing, list any blocking data gaps found in backlog_questions.md.
 ```

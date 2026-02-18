@@ -20,7 +20,7 @@ section_visibility:
 ---
 
 **When:** <start-end or year>
-**Context:** <1-2 sentence setup: who/why>
+**Context:** <1-2 sentence setup>
 **My role:** <what you owned>
 **Stack:**
 - <tech>
@@ -37,10 +37,8 @@ section_visibility:
 ## Team & collaboration
 - <bullets>
 
-## Leadership & delivery
-- <people management scope>
-- <delivery cadence / planning model>
-- <conflict handling / unblock approach>
+## Leadership & delivery (optional)
+- <only if relevant>
 
 ## Role relevance
 - Target role(s): <role names>
@@ -91,11 +89,11 @@ section_visibility:
       "impact_highlights": ["I improved ..."]
     },
     "third_person": {
-      "public_summary": "JP Neville built ...",
-      "highlights": ["JP designed ..."],
-      "outcomes": ["JP improved ..."],
-      "what_i_built": ["JP designed ..."],
-      "impact_highlights": ["JP improved ..."]
+      "public_summary": "The candidate built ...",
+      "highlights": ["The candidate designed ..."],
+      "outcomes": ["The candidate improved ..."],
+      "what_i_built": ["The candidate designed ..."],
+      "impact_highlights": ["The candidate improved ..."]
     }
   }
 }
@@ -121,12 +119,25 @@ evidence:
   "name": "",
   "headline": "",
   "location": "",
-  "links": {"linkedin": "", "github": "", "website": ""},
+  "links": {"linkedin": "", "github": "", "website": "", "email": ""},
   "summary": "",
+  "profile_context": {
+    "work_mode": "individual_contributor|manager|hybrid|founder|other",
+    "seniority": "",
+    "domain_focus": []
+  },
+  "assessment_dimensions": [
+    {"id": "technical_delivery", "enabled": true, "priority": "HIGH"},
+    {"id": "people_leadership", "enabled": false, "priority": "MED"},
+    {"id": "mentorship_coaching", "enabled": false, "priority": "MED"},
+    {"id": "product_strategy", "enabled": false, "priority": "MED"},
+    {"id": "research_innovation", "enabled": false, "priority": "LOW"},
+    {"id": "public_presence", "enabled": false, "priority": "LOW"}
+  ],
   "portfolio_style_profile": {
     "tone": "professional|playful|minimalist",
     "primary_color": "neutral|<other>",
-    "section_emphasis": ["featured_projects", "leadership", "skills"]
+    "section_emphasis": ["featured_projects", "about", "skills"]
   },
   "publication_preferences": {
     "default_public_voice": "first_person|third_person",
@@ -140,7 +151,8 @@ evidence:
     "home_style": "portfolio_first",
     "archive_strategy": "separate_page",
     "project_detail_layout": "highlights_outcomes",
-    "chat_audience": "recruiter_or_hiring_manager"
+    "enable_chatbot": false,
+    "chat_audience": ""
   },
   "target_roles": [],
   "skills": {
@@ -150,51 +162,22 @@ evidence:
     "ml": [],
     "data": []
   },
-  "experience": [
-    {
-      "company": "",
-      "title": "",
-      "location": "",
-      "start_date": "",
-      "end_date": "",
-      "highlights": [],
-      "projects": ["<project_slug>"]
-    }
-  ],
+  "experience": [],
   "featured_projects": [],
   "leadership_profile": {
-    "projects_managed_concurrently": "",
-    "people_management_scope": {
-      "direct_reports": "",
-      "dotted_line_reports": "",
-      "mentored_individuals": ""
-    },
-    "team_management_examples": [],
-    "conflict_management_approach": [],
-    "resource_rebalancing_approach": [],
-    "leadership_rituals": [],
-    "chatbot_faq_signals": {
-      "projects_managed_at_once": "",
-      "people_managed_at_once": "",
-      "handling_team_conflict": ""
-    }
+    "enabled": false,
+    "summary": "",
+    "scope": {},
+    "examples": []
   },
-  "targeting_profile": {
-    "target_roles": [],
-    "target_industries": [],
-    "target_locations": [],
-    "constraints": {
-      "work_mode": "",
-      "work_authorization": "",
-      "compensation_notes": ""
-    },
-    "job_postings": [],
-    "keyword_bank": {
-      "must_have": [],
-      "nice_to_have": [],
-      "gaps": []
-    }
+  "assistant_profile": {
+    "enabled": false,
+    "audience": "",
+    "response_style": "",
+    "fallback_contact": "",
+    "faq_signals": {}
   },
+  "targeting_profile": {},
   "story_bank": [],
   "resume_variants": []
 }
@@ -208,11 +191,6 @@ evidence:
   Evidence: <url/path or MISSING>
   Related: <project_slug or role>
 ```
-
-Publication guidance:
-- If exact numbers are sensitive, keep public claim wording generalized and truthful.
-- Keep detailed numbers in private evidence notes or backlog until approved.
-- For resume variants, prefer HIGH/MEDIUM confidence claims.
 
 ## `backlog_questions.md`
 
@@ -237,23 +215,13 @@ Publication guidance:
     "home_style": "portfolio_first",
     "archive_strategy": "separate_page",
     "project_detail_layout": "highlights_outcomes",
-    "chat_audience": "recruiter_or_hiring_manager"
+    "enable_chatbot": false,
+    "chat_audience": ""
   },
+  "navigation": ["about", "featured-projects", "skills", "archive", "contact"],
   "featured_project_order": ["<slug>"],
-  "projects": [
-    {
-      "slug": "<slug>",
-      "title": "<public-safe title>",
-      "bucket": "featured|archive",
-      "timeline_display": "hide|show",
-      "ready_for_site": true
-    }
-  ],
-  "chat_requirements": {
-    "strict_grounding": true,
-    "fallback_text": "I don’t have enough evidence in my repository to answer that confidently,",
-    "open_with_phrase": "JP is"
-  },
+  "projects": [{"slug": "<slug>", "bucket": "featured|archive", "ready_for_site": true}],
+  "chat_requirements": null,
   "public_safety_rules": ["..."]
 }
 ```
