@@ -15,6 +15,8 @@ career-repo-builder-skill/
     SKILL.md
     agents/openai.yaml
     scripts/bootstrap_career_repo.py
+    scripts/publish_safe_export.py
+    scripts/publish_lint.py
     references/templates.md
 ```
 
@@ -50,9 +52,10 @@ Treat these files as required handoff inputs:
 
 1. `career.json`
 2. `projects/<slug>/project.md`
-3. `projects/<slug>/evidence.yml`
-4. `claims.md`
-5. `backlog_questions.md`
+3. `projects/<slug>/website.json`
+4. `projects/<slug>/evidence.yml`
+5. `claims.md`
+6. `backlog_questions.md`
 
 Publish gating rule:
 Only include claims in public output that are publication-safe and have acceptable confidence/evidence.
@@ -67,6 +70,7 @@ Build a production-ready portfolio website using the data in <CAREER_ROOT>.
 Inputs:
 - <CAREER_ROOT>/career.json
 - <CAREER_ROOT>/projects/*/project.md
+- <CAREER_ROOT>/projects/*/website.json
 - <CAREER_ROOT>/projects/*/evidence.yml
 - <CAREER_ROOT>/claims.md
 - <CAREER_ROOT>/backlog_questions.md
@@ -74,16 +78,17 @@ Inputs:
 Requirements:
 1) Generate pages for Home/About, Experience, Projects, and Contact.
 2) Use `featured_projects` from career.json first, then optionally additional projects.
-3) Render project pages from project.md sections (Context, Role, Impact, Constraints, Team, Leadership, Evidence, Lessons).
-4) Show confidence badges for impact claims.
-5) Respect evidence visibility:
+3) Render project pages from `project.md` + `website.json` structured fields.
+4) Allow tone switching between `first_person` and `third_person` from `website.json.voice_variants`.
+5) Show confidence badges for impact claims.
+6) Respect evidence visibility:
    - public: render links
    - private/local: show "Evidence available on request" without exposing private paths
-6) Add a "Leadership" section using `leadership_profile`.
-7) Add a "Selected Stories" section from `story_bank` if present.
-8) Exclude or de-emphasize items still marked NEEDS_CLARIFICATION.
-9) Keep content scannable and professional.
-10) Output a complete runnable project and include run/build commands.
+7) Add a "Leadership" section using `leadership_profile`.
+8) Add a "Selected Stories" section from `story_bank` if present.
+9) Exclude or de-emphasize items still marked NEEDS_CLARIFICATION.
+10) Keep content scannable and professional.
+11) Output a complete runnable project and include run/build commands.
 
 Before finalizing, list any blocking data gaps found in backlog_questions.md.
 ```

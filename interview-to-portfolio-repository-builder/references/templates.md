@@ -6,6 +6,19 @@ Use these templates directly when creating or updating repository files.
 
 ```markdown
 # <Project Name>
+---
+section_visibility:
+  context: public
+  what_i_built: public
+  impact: public
+  constraints_tradeoffs: public
+  team_collaboration: public
+  leadership_delivery: public
+  role_relevance: public
+  evidence: private
+  notes_lessons: public
+---
+
 **When:** <start-end or year>
 **Context:** <1-2 sentence setup: who/why>
 **My role:** <what you owned>
@@ -42,6 +55,42 @@ Use these templates directly when creating or updating repository files.
 - <bullets>
 ```
 
+## `website.json` (per project)
+
+```json
+{
+  "section_visibility": {
+    "context": "public",
+    "what_i_built": "public",
+    "impact": "public",
+    "constraints_tradeoffs": "public",
+    "team_collaboration": "public",
+    "leadership_delivery": "public",
+    "role_relevance": "public",
+    "evidence": "private",
+    "notes_lessons": "public"
+  },
+  "structured_fields": {
+    "public_summary": "<portfolio summary>",
+    "what_i_built": ["<bullet>"],
+    "impact_highlights": ["<bullet>"],
+    "stack": ["<tech>"]
+  },
+  "voice_variants": {
+    "first_person": {
+      "public_summary": "I built ...",
+      "what_i_built": ["I designed ..."],
+      "impact_highlights": ["I improved ..."]
+    },
+    "third_person": {
+      "public_summary": "JP Neville built ...",
+      "what_i_built": ["JP designed ..."],
+      "impact_highlights": ["JP improved ..."]
+    }
+  }
+}
+```
+
 ## `evidence.yml`
 
 ```yaml
@@ -64,6 +113,11 @@ evidence:
   "location": "",
   "links": {"linkedin": "", "github": "", "website": ""},
   "summary": "",
+  "portfolio_style_profile": {
+    "tone": "professional|playful|minimalist",
+    "primary_color": "orange|<other>",
+    "section_emphasis": ["current_focus", "featured_projects", "leadership"]
+  },
   "target_roles": [],
   "skills": {
     "core": [],
@@ -110,46 +164,15 @@ evidence:
       "work_authorization": "",
       "compensation_notes": ""
     },
-    "job_postings": [
-      {
-        "id": "",
-        "company": "",
-        "role_title": "",
-        "url_or_text_ref": "",
-        "priority": "HIGH|MED|LOW"
-      }
-    ],
+    "job_postings": [],
     "keyword_bank": {
       "must_have": [],
       "nice_to_have": [],
       "gaps": []
     }
   },
-  "story_bank": [
-    {
-      "id": "",
-      "theme": "delivery|leadership|conflict|tradeoff|failure-recovery",
-      "format": "STAR|CAR",
-      "situation": "",
-      "task": "",
-      "action": "",
-      "result": "",
-      "evidence": "MISSING"
-    }
-  ],
-  "resume_variants": [
-    {
-      "variant_id": "",
-      "target_role": "",
-      "target_job_ref": "",
-      "summary_angle": "",
-      "prioritized_skills": [],
-      "prioritized_projects": [],
-      "role_fit_bullets": [],
-      "deprioritized_content": [],
-      "rationale": ""
-    }
-  ]
+  "story_bank": [],
+  "resume_variants": []
 }
 ```
 
@@ -172,4 +195,11 @@ Publication guidance:
 ```markdown
 ## Missing details
 - [ ] <question> (priority: HIGH|MED|LOW) (related: <slug>)
+```
+
+## Publish-safe scripts
+
+```bash
+python3 scripts/publish_safe_export.py --root /career --voice first_person
+python3 scripts/publish_lint.py --path /career/public_site
 ```

@@ -1,4 +1,4 @@
 interface:
   display_name: "Interview to Portfolio Builder"
   short_description: "Build and maintain a career evidence repository"
-  default_prompt: "Interview the user and write/update a structured /career repository with evidence-aware claims for portfolio generation."
+  default_prompt: "Interview the user and write/update a structured /career repository with project website.json metadata, voice variants, and publish-safe outputs."

@@ -1,6 +1,6 @@
 ---
 name: interview-to-portfolio-repository-builder
-description: Conduct a structured, evidence-aware interview and write or update a portfolio-ready /career repository (career.json, project.md, evidence.yml, claims.md, backlog_questions.md, README.md) for automated portfolio generation and role-targeted resume tailoring.
+description: Conduct a structured, evidence-aware interview and write or update a portfolio-ready /career repository (career.json, project.md, website.json, evidence.yml, claims.md, backlog_questions.md, README.md) for automated portfolio generation and role-targeted resume tailoring.
 ---
 
 # Interview-to-Portfolio Repository Builder
@@ -29,6 +29,7 @@ Ensure these paths exist before completion:
 /career
   /career.json
   /projects/<project_slug>/project.md
+  /projects/<project_slug>/website.json
   /projects/<project_slug>/evidence.yml
   /claims.md
   /backlog_questions.md
@@ -47,7 +48,7 @@ Ask short, specific questions:
 1. Display name.
 2. Target roles.
 3. Tone (`professional`, `playful`, `minimalist`).
-4. Emphasis areas (leadership, ML, product, consulting, infra, etc.).
+4. Emphasis areas (leadership, ML, product, consulting, infra, etc.) and section priorities.
 5. Sources:
 - Resume (required): paste or file path.
 - Optional: old resumes, LinkedIn URL/export, GitHub, personal site, project writeups, decks.
@@ -114,10 +115,20 @@ For each project, ask:
 9. Lessons and what to change in retrospect.
 10. Evidence links (repo, PR, docs, screenshots, decks).
 11. Role relevance (which target roles this project supports, covered keywords, likely gaps).
+12. Public section visibility by section (`public|private`) for publication safety.
+13. Structured website fields:
+- `public_summary`
+- `what_i_built[]`
+- `impact_highlights[]`
+- `stack[]`
+14. Voice variants for website copy:
+- `first_person`
+- `third_person`
 
 Write:
 1. `/career/projects/<slug>/project.md`
-2. `/career/projects/<slug>/evidence.yml`
+2. `/career/projects/<slug>/website.json`
+3. `/career/projects/<slug>/evidence.yml`
 
 Also update:
 1. `/career/claims.md` with confidence and evidence
@@ -164,6 +175,7 @@ Ensure `career.json` supports common portfolio pages:
 12. `story_bank`
 13. `targeting_profile`
 14. `resume_variants`
+15. `portfolio_style_profile` (`tone`, `primary_color`, `section_emphasis`)
 
 ### Module 6: Role Targeting
 
@@ -209,6 +221,9 @@ Before ending, prepare handoff-ready instructions for the next build step:
 3. Provide a copy/paste portfolio-site build prompt that references `career.json`, project markdown, evidence files, and claims/backlog gating.
 4. If role targeting is enabled, provide a copy/paste resume-tailoring prompt for the top target role.
 5. State publication-safety rules explicitly (private/local evidence handling and sensitive metric generalization).
+6. Export and lint publish-safe artifacts:
+   - `python3 scripts/publish_safe_export.py --root /career --voice first_person`
+   - `python3 scripts/publish_lint.py --path /career/public_site`
 
 ## File Update Protocol
 

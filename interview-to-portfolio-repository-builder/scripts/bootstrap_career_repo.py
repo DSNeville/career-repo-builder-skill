@@ -21,6 +21,15 @@ CAREER_TEMPLATE = {
     "location": "",
     "links": {"linkedin": "", "github": "", "website": ""},
     "summary": "",
+    "portfolio_style_profile": {
+        "tone": "professional",
+        "primary_color": "orange",
+        "section_emphasis": [
+            "current_focus",
+            "featured_projects",
+            "leadership",
+        ],
+    },
     "target_roles": [],
     "skills": {
         "core": [],
@@ -81,6 +90,7 @@ This folder stores a structured, evidence-aware career dataset used for automate
 - `career.json`: core profile, timeline, skills, and featured projects
 - `projects/<slug>/project.md`: project narrative and impact
 - `projects/<slug>/evidence.yml`: evidence links and provenance
+- `projects/<slug>/website.json`: publication controls and structured portfolio fields
 - `claims.md`: claims with confidence and evidence traceability
 - `backlog_questions.md`: unresolved clarification/evidence questions
 - `career.json.leadership_profile`: chatbot-ready leadership and management signals
@@ -94,6 +104,16 @@ This folder stores a structured, evidence-aware career dataset used for automate
 3. Preserve prior user-authored content unless explicitly corrected.
 4. For sensitive quantified claims, confirm public-safe generalized wording.
 5. For tailored resumes, map project evidence and claims to target-role keywords.
+
+## Publish-safe workflow
+1. Create or update project `website.json` files:
+   - `section_visibility` for public/private section handling.
+   - `structured_fields` for portfolio rendering (`public_summary`, `what_i_built`, `impact_highlights`, `stack`).
+   - `voice_variants` for `first_person` and `third_person`.
+2. Export sanitized public payloads:
+   - `python3 scripts/publish_safe_export.py --root /career --voice first_person`
+3. Lint publish outputs:
+   - `python3 scripts/publish_lint.py --path /career/public_site`
 """
 
 
@@ -112,6 +132,19 @@ BACKLOG_TEMPLATE = """## Missing details
 
 
 PROJECT_MD_TEMPLATE = """# {project_name}
+---
+section_visibility:
+  context: public
+  what_i_built: public
+  impact: public
+  constraints_tradeoffs: public
+  team_collaboration: public
+  leadership_delivery: public
+  role_relevance: public
+  evidence: private
+  notes_lessons: public
+---
+
 **When:** NEEDS_CLARIFICATION
 **Context:** NEEDS_CLARIFICATION
 **My role:** NEEDS_CLARIFICATION
@@ -142,6 +175,39 @@ PROJECT_MD_TEMPLATE = """# {project_name}
 ## Notes / lessons
 - NEEDS_CLARIFICATION
 """
+
+
+WEBSITE_JSON_TEMPLATE = {
+    "section_visibility": {
+        "context": "public",
+        "what_i_built": "public",
+        "impact": "public",
+        "constraints_tradeoffs": "public",
+        "team_collaboration": "public",
+        "leadership_delivery": "public",
+        "role_relevance": "public",
+        "evidence": "private",
+        "notes_lessons": "public",
+    },
+    "structured_fields": {
+        "public_summary": "NEEDS_CLARIFICATION",
+        "what_i_built": [],
+        "impact_highlights": [],
+        "stack": [],
+    },
+    "voice_variants": {
+        "first_person": {
+            "public_summary": "I NEEDS_CLARIFICATION",
+            "what_i_built": [],
+            "impact_highlights": [],
+        },
+        "third_person": {
+            "public_summary": "JP Neville NEEDS_CLARIFICATION",
+            "what_i_built": [],
+            "impact_highlights": [],
+        },
+    },
+}
 
 
 EVIDENCE_YML_TEMPLATE = """project: "{project_name}"
@@ -192,13 +258,19 @@ def ensure_career_json(path: Path) -> None:
 
 def ensure_project(root: Path, slug: str) -> None:
     project_dir = root / "projects" / slug
+    project_name = slug.replace("-", " ").title()
+
     write_if_missing(
         project_dir / "project.md",
-        PROJECT_MD_TEMPLATE.format(project_name=slug.replace("-", " ").title()),
+        PROJECT_MD_TEMPLATE.format(project_name=project_name),
+    )
+    write_if_missing(
+        project_dir / "website.json",
+        json.dumps(WEBSITE_JSON_TEMPLATE, indent=2) + "\n",
     )
     write_if_missing(
         project_dir / "evidence.yml",
-        EVIDENCE_YML_TEMPLATE.format(project_name=slug.replace("-", " ").title()),
+        EVIDENCE_YML_TEMPLATE.format(project_name=project_name),
     )
 
 
