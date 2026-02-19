@@ -19,45 +19,8 @@ CAREER_TEMPLATE = {
     "name": "",
     "headline": "",
     "location": "",
-    "links": {"linkedin": "", "github": "", "website": "", "email": ""},
+    "links": {"linkedin": "", "github": "", "website": ""},
     "summary": "",
-    "profile_context": {
-        "work_mode": "individual_contributor",
-        "seniority": "",
-        "domain_focus": [],
-    },
-    "assessment_dimensions": [
-        {"id": "technical_delivery", "enabled": True, "priority": "HIGH"},
-        {"id": "people_leadership", "enabled": False, "priority": "MED"},
-        {"id": "mentorship_coaching", "enabled": False, "priority": "MED"},
-        {"id": "product_strategy", "enabled": False, "priority": "MED"},
-        {"id": "research_innovation", "enabled": False, "priority": "LOW"},
-        {"id": "public_presence", "enabled": False, "priority": "LOW"},
-    ],
-    "portfolio_style_profile": {
-        "tone": "professional",
-        "primary_color": "neutral",
-        "section_emphasis": [
-            "featured_projects",
-            "about",
-            "skills",
-        ],
-    },
-    "publication_preferences": {
-        "default_public_voice": "first_person",
-        "anonymize_clients": True,
-        "anonymize_employer_names": False,
-        "show_evidence_on_site": False,
-        "show_project_dates": "only_if_precise",
-        "include_writing_section": False,
-    },
-    "site_build_hints": {
-        "home_style": "portfolio_first",
-        "archive_strategy": "separate_page",
-        "project_detail_layout": "highlights_outcomes",
-        "enable_chatbot": False,
-        "chat_audience": "",
-    },
     "target_roles": [],
     "skills": {
         "core": [],
@@ -68,17 +31,12 @@ CAREER_TEMPLATE = {
     },
     "experience": [],
     "featured_projects": [],
-    "leadership_profile": {
-        "enabled": False,
-        "summary": "",
-        "scope": {},
-        "examples": [],
-    },
-    "assistant_profile": {
-        "enabled": False,
-        "audience": "",
-        "response_style": "",
-        "fallback_contact": "",
+    "role_signal_profile": {
+        "track": "NEEDS_CLARIFICATION",
+        "scope_signals": [],
+        "execution_signals": [],
+        "decision_signals": [],
+        "collaboration_signals": [],
         "faq_signals": {},
     },
     "targeting_profile": {
@@ -105,6 +63,18 @@ CAREER_TEMPLATE = {
     "writing": [],
 }
 
+FACTS_INDEX_TEMPLATE = {
+    "version": "1",
+    "profile": {
+        "positioning": [],
+        "audience_notes": [],
+        "public_safety_notes": [],
+    },
+    "intents": [],
+    "facts": [],
+    "project_cards": [],
+}
+
 
 README_TEMPLATE = """# Career Repository
 
@@ -112,14 +82,12 @@ This folder stores a structured, evidence-aware career dataset used for automate
 
 ## Contents
 - `career.json`: core profile, timeline, skills, and featured projects
+- `facts_index.json`: concise, evidence-aware facts and intent hints for grounded Q&A
 - `projects/<slug>/project.md`: project narrative and impact
 - `projects/<slug>/evidence.yml`: evidence links and provenance
-- `projects/<slug>/website.json`: publication controls and structured portfolio fields
 - `claims.md`: claims with confidence and evidence traceability
 - `backlog_questions.md`: unresolved clarification/evidence questions
-- `career.json.assessment_dimensions`: adaptive interview coverage by profile type
-- `career.json.leadership_profile`: optional leadership-specific signals
-- `career.json.assistant_profile`: optional chatbot-specific signals
+- `career.json.role_signal_profile`: dynamic role signals (IC, leadership, hybrid, etc.)
 - `career.json.targeting_profile`: role targeting and keyword mapping inputs
 - `career.json.story_bank`: interview-ready STAR/CAR stories
 - `career.json.resume_variants`: role-specific resume tailoring pack
@@ -130,18 +98,6 @@ This folder stores a structured, evidence-aware career dataset used for automate
 3. Preserve prior user-authored content unless explicitly corrected.
 4. For sensitive quantified claims, confirm public-safe generalized wording.
 5. For tailored resumes, map project evidence and claims to target-role keywords.
-
-## Publish-safe workflow
-1. Create or update project `website.json` files:
-   - `section_visibility` for public/private section handling.
-   - `structured_fields` for portfolio rendering (`public_summary`, `highlights`, `outcomes`, `stack`).
-   - `voice_variants` for `first_person` and `third_person`.
-2. Export sanitized public payloads:
-   - `python3 scripts/publish_safe_export.py --root /career --voice first_person`
-3. Lint publish outputs:
-   - `python3 scripts/publish_lint.py --path /career/public_site`
-4. Generate build handoff artifacts:
-   - `python3 scripts/build_handoff.py --root /career`
 """
 
 
@@ -160,19 +116,6 @@ BACKLOG_TEMPLATE = """## Missing details
 
 
 PROJECT_MD_TEMPLATE = """# {project_name}
----
-section_visibility:
-  context: public
-  what_i_built: public
-  impact: public
-  constraints_tradeoffs: public
-  team_collaboration: public
-  leadership_delivery: public
-  role_relevance: public
-  evidence: private
-  notes_lessons: public
----
-
 **When:** NEEDS_CLARIFICATION
 **Context:** NEEDS_CLARIFICATION
 **My role:** NEEDS_CLARIFICATION
@@ -203,49 +146,6 @@ section_visibility:
 ## Notes / lessons
 - NEEDS_CLARIFICATION
 """
-
-
-WEBSITE_JSON_TEMPLATE = {
-    "section_visibility": {
-        "context": "public",
-        "what_i_built": "public",
-        "impact": "public",
-        "constraints_tradeoffs": "public",
-        "team_collaboration": "public",
-        "leadership_delivery": "public",
-        "role_relevance": "public",
-        "evidence": "private",
-        "notes_lessons": "public",
-    },
-    "display": {
-        "title": "NEEDS_CLARIFICATION",
-        "timeline_display": "hide",
-    },
-    "structured_fields": {
-        "public_summary": "NEEDS_CLARIFICATION",
-        "highlights": [],
-        "outcomes": [],
-        "what_i_built": [],
-        "impact_highlights": [],
-        "stack": [],
-    },
-    "voice_variants": {
-        "first_person": {
-            "public_summary": "I NEEDS_CLARIFICATION",
-            "highlights": [],
-            "outcomes": [],
-            "what_i_built": [],
-            "impact_highlights": [],
-        },
-        "third_person": {
-            "public_summary": "Candidate NEEDS_CLARIFICATION",
-            "highlights": [],
-            "outcomes": [],
-            "what_i_built": [],
-            "impact_highlights": [],
-        },
-    },
-}
 
 
 EVIDENCE_YML_TEMPLATE = """project: "{project_name}"
@@ -296,20 +196,41 @@ def ensure_career_json(path: Path) -> None:
 
 def ensure_project(root: Path, slug: str) -> None:
     project_dir = root / "projects" / slug
-    project_name = slug.replace("-", " ").title()
-
     write_if_missing(
         project_dir / "project.md",
-        PROJECT_MD_TEMPLATE.format(project_name=project_name),
-    )
-    write_if_missing(
-        project_dir / "website.json",
-        json.dumps(WEBSITE_JSON_TEMPLATE, indent=2) + "\n",
+        PROJECT_MD_TEMPLATE.format(project_name=slug.replace("-", " ").title()),
     )
     write_if_missing(
         project_dir / "evidence.yml",
-        EVIDENCE_YML_TEMPLATE.format(project_name=project_name),
+        EVIDENCE_YML_TEMPLATE.format(project_name=slug.replace("-", " ").title()),
     )
+
+def ensure_facts_index(path: Path) -> None:
+    if not path.exists():
+        path.write_text(json.dumps(FACTS_INDEX_TEMPLATE, indent=2) + "\n", encoding="utf-8")
+        return
+
+    raw = path.read_text(encoding="utf-8").strip()
+    if not raw:
+        path.write_text(json.dumps(FACTS_INDEX_TEMPLATE, indent=2) + "\n", encoding="utf-8")
+        return
+
+    try:
+        existing = json.loads(raw)
+    except json.JSONDecodeError:
+        backup = path.with_suffix(".json.bak")
+        backup.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+        path.write_text(json.dumps(FACTS_INDEX_TEMPLATE, indent=2) + "\n", encoding="utf-8")
+        return
+
+    changed = False
+    for key, default_value in FACTS_INDEX_TEMPLATE.items():
+        if key not in existing:
+            existing[key] = default_value
+            changed = True
+
+    if changed:
+        path.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
 
 
 def parse_args() -> argparse.Namespace:
@@ -334,6 +255,7 @@ def main() -> None:
     root.mkdir(parents=True, exist_ok=True)
 
     ensure_career_json(root / "career.json")
+    ensure_facts_index(root / "facts_index.json")
     write_if_missing(root / "claims.md", CLAIMS_TEMPLATE)
     write_if_missing(root / "backlog_questions.md", BACKLOG_TEMPLATE)
     write_if_missing(root / "README.md", README_TEMPLATE)

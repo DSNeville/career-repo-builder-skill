@@ -6,21 +6,8 @@ Use these templates directly when creating or updating repository files.
 
 ```markdown
 # <Project Name>
----
-section_visibility:
-  context: public
-  what_i_built: public
-  impact: public
-  constraints_tradeoffs: public
-  team_collaboration: public
-  leadership_delivery: public
-  role_relevance: public
-  evidence: private
-  notes_lessons: public
----
-
 **When:** <start-end or year>
-**Context:** <1-2 sentence setup>
+**Context:** <1-2 sentence setup: who/why>
 **My role:** <what you owned>
 **Stack:**
 - <tech>
@@ -37,8 +24,10 @@ section_visibility:
 ## Team & collaboration
 - <bullets>
 
-## Leadership & delivery (optional)
-- <only if relevant>
+## Leadership & delivery
+- <people management scope>
+- <delivery cadence / planning model>
+- <conflict handling / unblock approach>
 
 ## Role relevance
 - Target role(s): <role names>
@@ -51,52 +40,6 @@ section_visibility:
 
 ## Notes / lessons
 - <bullets>
-```
-
-## `website.json` (per project)
-
-```json
-{
-  "section_visibility": {
-    "context": "public",
-    "what_i_built": "public",
-    "impact": "public",
-    "constraints_tradeoffs": "public",
-    "team_collaboration": "public",
-    "leadership_delivery": "public",
-    "role_relevance": "public",
-    "evidence": "private",
-    "notes_lessons": "public"
-  },
-  "display": {
-    "title": "<public-safe title>",
-    "timeline_display": "hide"
-  },
-  "structured_fields": {
-    "public_summary": "<portfolio summary>",
-    "highlights": ["<bullet>"],
-    "outcomes": ["<bullet>"],
-    "what_i_built": ["<compatibility bullet>"],
-    "impact_highlights": ["<compatibility bullet>"],
-    "stack": ["<tech>"]
-  },
-  "voice_variants": {
-    "first_person": {
-      "public_summary": "I built ...",
-      "highlights": ["I designed ..."],
-      "outcomes": ["I improved ..."],
-      "what_i_built": ["I designed ..."],
-      "impact_highlights": ["I improved ..."]
-    },
-    "third_person": {
-      "public_summary": "The candidate built ...",
-      "highlights": ["The candidate designed ..."],
-      "outcomes": ["The candidate improved ..."],
-      "what_i_built": ["The candidate designed ..."],
-      "impact_highlights": ["The candidate improved ..."]
-    }
-  }
-}
 ```
 
 ## `evidence.yml`
@@ -119,41 +62,8 @@ evidence:
   "name": "",
   "headline": "",
   "location": "",
-  "links": {"linkedin": "", "github": "", "website": "", "email": ""},
+  "links": {"linkedin": "", "github": "", "website": ""},
   "summary": "",
-  "profile_context": {
-    "work_mode": "individual_contributor|manager|hybrid|founder|other",
-    "seniority": "",
-    "domain_focus": []
-  },
-  "assessment_dimensions": [
-    {"id": "technical_delivery", "enabled": true, "priority": "HIGH"},
-    {"id": "people_leadership", "enabled": false, "priority": "MED"},
-    {"id": "mentorship_coaching", "enabled": false, "priority": "MED"},
-    {"id": "product_strategy", "enabled": false, "priority": "MED"},
-    {"id": "research_innovation", "enabled": false, "priority": "LOW"},
-    {"id": "public_presence", "enabled": false, "priority": "LOW"}
-  ],
-  "portfolio_style_profile": {
-    "tone": "professional|playful|minimalist",
-    "primary_color": "neutral|<other>",
-    "section_emphasis": ["featured_projects", "about", "skills"]
-  },
-  "publication_preferences": {
-    "default_public_voice": "first_person|third_person",
-    "anonymize_clients": true,
-    "anonymize_employer_names": false,
-    "show_evidence_on_site": false,
-    "show_project_dates": "always|only_if_precise|hide",
-    "include_writing_section": false
-  },
-  "site_build_hints": {
-    "home_style": "portfolio_first",
-    "archive_strategy": "separate_page",
-    "project_detail_layout": "highlights_outcomes",
-    "enable_chatbot": false,
-    "chat_audience": ""
-  },
   "target_roles": [],
   "skills": {
     "core": [],
@@ -162,24 +72,119 @@ evidence:
     "ml": [],
     "data": []
   },
-  "experience": [],
+  "experience": [
+    {
+      "company": "",
+      "title": "",
+      "location": "",
+      "start_date": "",
+      "end_date": "",
+      "highlights": [],
+      "projects": ["<project_slug>"]
+    }
+  ],
   "featured_projects": [],
-  "leadership_profile": {
-    "enabled": false,
-    "summary": "",
-    "scope": {},
-    "examples": []
-  },
-  "assistant_profile": {
-    "enabled": false,
-    "audience": "",
-    "response_style": "",
-    "fallback_contact": "",
+  "role_signal_profile": {
+    "track": "individual-contributor|people-leader|hybrid|founder|research|product|NEEDS_CLARIFICATION",
+    "scope_signals": [],
+    "execution_signals": [],
+    "decision_signals": [],
+    "collaboration_signals": [],
     "faq_signals": {}
   },
-  "targeting_profile": {},
-  "story_bank": [],
-  "resume_variants": []
+  "targeting_profile": {
+    "target_roles": [],
+    "target_industries": [],
+    "target_locations": [],
+    "constraints": {
+      "work_mode": "",
+      "work_authorization": "",
+      "compensation_notes": ""
+    },
+    "job_postings": [
+      {
+        "id": "",
+        "company": "",
+        "role_title": "",
+        "url_or_text_ref": "",
+        "priority": "HIGH|MED|LOW"
+      }
+    ],
+    "keyword_bank": {
+      "must_have": [],
+      "nice_to_have": [],
+      "gaps": []
+    }
+  },
+  "story_bank": [
+    {
+      "id": "",
+      "theme": "delivery|leadership|conflict|tradeoff|failure-recovery",
+      "format": "STAR|CAR",
+      "situation": "",
+      "task": "",
+      "action": "",
+      "result": "",
+      "evidence": "MISSING"
+    }
+  ],
+  "resume_variants": [
+    {
+      "variant_id": "",
+      "target_role": "",
+      "target_job_ref": "",
+      "summary_angle": "",
+      "prioritized_skills": [],
+      "prioritized_projects": [],
+      "role_fit_bullets": [],
+      "deprioritized_content": [],
+      "rationale": ""
+    }
+  ]
+}
+```
+
+Optional compatibility field:
+- `leadership_profile` can be added when the user is explicitly leadership-oriented, but should not be required.
+
+## `facts_index.json`
+
+```json
+{
+  "version": "1",
+  "profile": {
+    "positioning": [],
+    "audience_notes": [],
+    "public_safety_notes": []
+  },
+  "intents": [
+    {
+      "intent": "current-focus|project-fit|skills|leadership|delivery-style|career-story|subjective-inference",
+      "signals": [],
+      "response_pattern": "NEEDS_CLARIFICATION",
+      "source_priority": []
+    }
+  ],
+  "facts": [
+    {
+      "id": "fact-001",
+      "type": "profile|project|role|skill|outcome|values",
+      "subject": "career|<project_slug>",
+      "statement": "NEEDS_CLARIFICATION",
+      "tags": [],
+      "confidence": "HIGH|MEDIUM|LOW",
+      "evidence": "MISSING",
+      "public_safe": true
+    }
+  ],
+  "project_cards": [
+    {
+      "slug": "<project_slug>",
+      "highlights": [],
+      "outcomes": [],
+      "stack": []
+    }
+  ]
 }
 ```
 
@@ -192,44 +197,14 @@ evidence:
   Related: <project_slug or role>
 ```
 
+Publication guidance:
+- If exact numbers are sensitive for public posting, keep the claim truthful but generalized.
+- Keep detailed numbers in private evidence notes or backlog until approved for publication.
+- When a claim is reused in a resume variant, prefer HIGH/MEDIUM confidence items.
+
 ## `backlog_questions.md`
 
 ```markdown
 ## Missing details
 - [ ] <question> (priority: HIGH|MED|LOW) (related: <slug>)
-```
-
-## `public_site/website_handoff.json` shape
-
-```json
-{
-  "generated_at_utc": "<iso8601>",
-  "source_root": "<career path>",
-  "defaults": {
-    "public_voice": "first_person",
-    "anonymize_clients": true,
-    "show_evidence_on_site": false,
-    "show_project_dates": "only_if_precise"
-  },
-  "site_profile": {
-    "home_style": "portfolio_first",
-    "archive_strategy": "separate_page",
-    "project_detail_layout": "highlights_outcomes",
-    "enable_chatbot": false,
-    "chat_audience": ""
-  },
-  "navigation": ["about", "featured-projects", "skills", "archive", "contact"],
-  "featured_project_order": ["<slug>"],
-  "projects": [{"slug": "<slug>", "bucket": "featured|archive", "ready_for_site": true}],
-  "chat_requirements": null,
-  "public_safety_rules": ["..."]
-}
-```
-
-## Publish-safe scripts
-
-```bash
-python3 scripts/publish_safe_export.py --root /career --voice first_person
-python3 scripts/publish_lint.py --path /career/public_site
-python3 scripts/build_handoff.py --root /career
 ```
